@@ -1,6 +1,6 @@
-import { model, parameters } from "@/config";
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
+import { model, parameters } from "../../config";
 import { hf } from "../../lib/hugging-face";
 import { IRequestWithFile, ISummarizeResponse } from "../../types";
 import { createSimpleSummary, upload } from "../../utils";
