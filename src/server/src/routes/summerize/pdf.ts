@@ -1,3 +1,4 @@
+import { model, parameters } from "@/config";
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
 import { hf } from "../../lib/hugging-face";
@@ -33,19 +34,13 @@ router.post(
         } as ISummarizeResponse);
       }
 
-      const maxLength = 1100;
       let summary: string;
 
       try {
-        // Tentative avec un modèle plus stable
         const result = await hf.summarization({
-          model: "mistralai/Magistral-Small-2506",
+          model, // variable définie dans le fichier config.ts
           inputs: text,
-          parameters: {
-            max_length: maxLength,
-            min_length: 30,
-            do_sample: false,
-          },
+          parameters, // variable définie dans le fichier config.ts
         });
         summary = result.summary_text;
       } catch (modelError) {
@@ -53,7 +48,7 @@ router.post(
           "Erreur avec le modèle IA, utilisation du résumé simple:",
           modelError
         );
-        summary = createSimpleSummary(text, maxLength);
+        summary = createSimpleSummary(text, parameters.max_length);
       }
 
       // Extraction des points clés

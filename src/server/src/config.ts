@@ -12,3 +12,18 @@ export const corsOptions = {
 };
 
 export const PORT = process.env.PORT || 3001;
+
+/**
+ * Model utilisé pour les résumés et les points clés
+ * https://huggingface.co/models?pipeline_tag=text-generation&sort=trending
+ */
+export const model = "mistralai/Magistral-Small-2506";
+
+/**
+ * Paramètres utilisés pour les résumés et les points clés
+ */
+export const parameters = {
+  max_length: 3000,
+  min_length: 30,
+  do_sample: false,
+};
