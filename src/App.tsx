@@ -1,63 +1,77 @@
-import { useState } from "react";
-import "./App.css";
+import { Button } from "./components/ui/button";
 
 function App() {
-  const [text, setText] = useState("");
-  const [summaryText, setSummaryText] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [pdfSummary, setPdfSummary] = useState("");
-
-  const handleTextSubmit = async () => {
-    try {
-      const res = await fetch("http://localhost:3001/summarize/text", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const data = await res.json();
-      setSummaryText(data.summary || "Aucun résumé reçu.");
-    } catch (err) {
-      setSummaryText("Erreur lors de la soumission du texte.");
-    }
-  };
-
-  const handlePdfSubmit = async () => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await fetch("http://localhost:3001/summarize/pdf", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      setPdfSummary(data.summary || "Aucun résumé reçu.");
-    } catch (err) {
-      setPdfSummary("Erreur lors de l'upload du fichier.");
-    }
-  };
-
   return (
-    <section>
-      <h1>Apocalipssi</h1>
-      <textarea rows={6} style={{ width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} placeholder="Entrez votre texte..." />
-      <button onClick={handleTextSubmit}>Envoyer pour résumé</button>
-      <div>
-        <strong>Résumé :</strong>
-        <p>{summaryText}</p>
-      </div>
+    <section className="max-w-5xl mx-auto mt-32 space-y-48 pb-48">
+      {/* HERO SECTION */}
+      <article className="text-center space-y-6">
+        <h1 className="text-7xl font-medium -tracking-[2px]">
+          Résumez vos PDF en quelques secondes avec l’IA
+        </h1>
+        <p className="max-w-xl mx-auto">
+          Envoyez votre fichier PDF, choisissez le modèle d’IA, et recevez
+          instantanément un résumé clair avec les points clés. Simple, rapide,
+          accessible partout.
+        </p>
+        <Button>Essayer gratuitement</Button>
 
-      <h2>Résumé de fichier PDF</h2>
-      <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files?.[0] || null)}/>
-      <button onClick={handlePdfSubmit} disabled={!file}> Envoyer le fichier</button>
-      <div>
-        <strong>Résumé :</strong>
-        <p>{pdfSummary}</p>
-      </div>
+        <div className="w-full h-[550px] bg-red-50 rounded-lg" />
+      </article>
+      {/* HERO SECTION */}
+
+      {/* SECTION COMMENT CA MARCHE ? */}
+      <article className="grid grid-cols-1 lg:grid-cols-2">
+        <div className="space-y-6">
+          <h2>3 étapes simples pour résumer n’importe quel PDF</h2>
+          <ul className="space-y-4">
+            <li>Téléchargez votre PDF</li>
+            <li>
+              Sélectionnez le modèle IA de votre choix (ChatGPT, Claude,
+              Mistral, etc.).
+            </li>
+            <li>
+              Obtenez un résumé complet et téléchargeable, avec les points
+              essentiels.
+            </li>
+          </ul>
+        </div>
+        <div className="w-full h-[550px] bg-red-50 rounded-lg" />
+      </article>
+      {/* SECTION COMMENT CA MARCHE ? */}
+
+      {/* SECTION COMMENT CA MARCHE ? */}
+      <article className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="w-full h-[550px] bg-red-50 rounded-lg" />
+        <div className="space-y-6">
+          <h2>Un résumé intelligent de vos documents longs</h2>
+          <p>
+            Plus besoin de lire des dizaines de pages. Notre IA analyse le
+            contenu, identifie les passages clés et vous livre un résumé
+            structuré et synthétique, en quelques secondes.
+          </p>
+        </div>
+      </article>
+      {/* SECTION COMMENT CA MARCHE ? */}
+
+      {/* SECTION FEATURE PRINCIPALE ? */}
+      <article className="text-center space-y-6">
+        <h2>Choisissez votre moteur d’intelligence préféré</h2>
+        <p className="max-w-2xl mx-auto">
+          Vous avez le contrôle : sélectionnez le modèle d’IA qui correspond à
+          vos attentes (OpenAI, Anthropic, Mistral…). Changez de modèle à tout
+          moment pour tester différentes perspectives.
+        </p>
+        <section className="flex items-center gap-4 mt-20 justify-center">
+          <div className="w-32 h-32 bg-amber-200 rounded-full" />
+          <div className="w-32 h-32 bg-blue-200 rounded-full" />
+          <div className="w-32 h-32 bg-green-200 rounded-full" />
+          <div className="w-32 h-32 bg-purple-200 rounded-full" />
+          <div className="w-32 h-32 bg-red-50 rounded-full" />
+        </section>
+      </article>
+      {/* SECTION FEATURE PRINCIPALE ? */}
     </section>
-  )
+  );
 }
 
 export default App;

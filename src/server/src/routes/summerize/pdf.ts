@@ -1,6 +1,6 @@
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
-import { model, parameters } from "../../config";
+import { parameters } from "../../config";
 import { hf } from "../../lib/hugging-face";
 import { IRequestWithFile, ISummarizeResponse } from "../../types";
 import { createSimpleSummary, upload } from "../../utils";
@@ -23,6 +23,16 @@ router.post(
         } as ISummarizeResponse);
       }
 
+      // Récupération du modèle sélectionné depuis le formulaire
+      const selectedModel = req.body.model;
+
+      if (!selectedModel) {
+        return res.status(400).json({
+          success: false,
+          error: "Aucun modèle d'IA sélectionné",
+        } as ISummarizeResponse);
+      }
+
       // Extraction du texte du PDF
       const pdfData = await pdfParse(req.file.buffer);
       const text = pdfData.text;
@@ -38,7 +48,7 @@ router.post(
 
       try {
         const result = await hf.summarization({
-          model, // variable définie dans le fichier config.ts
+          model: selectedModel, // Utilisation du modèle sélectionné par l'utilisateur
           inputs: text,
           parameters, // variable définie dans le fichier config.ts
         });
