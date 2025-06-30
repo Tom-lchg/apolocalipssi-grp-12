@@ -7,7 +7,8 @@ const router = Router();
 
 // Route d'inscription : hash du mot de passe et création de l'utilisateur
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email.toLowerCase();
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -21,7 +22,8 @@ router.post("/register", async (req, res) => {
 // Route de connexion : vérification des identifiants et génération d'un token JWT
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email.toLowerCase();
     const user = await User.findOne({ email });
 
     if (!user) {
