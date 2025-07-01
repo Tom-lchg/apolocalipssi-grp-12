@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { app } from "./app";
 import { PORT } from "./config";
-import summerizePdfRoute from "./routes/summerize/pdf";
-import summerizeTextRoute from "./routes/summerize/text";
+import summerizePdfRoute from "./routes/summarize/pdf";
+import summerizeTextRoute from "./routes/summarize/text";
 import authRoute from "./routes/auth";
 
 app.use("/summarize", summerizePdfRoute);

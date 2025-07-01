@@ -28,7 +28,7 @@ interface IModel {
   downloads: number;
 }
 
-const Summerize: FC = (): JSX.Element => {
+const Summarize: FC = (): JSX.Element => {
   const [file, setFile] = useState<File | null>(null);
   const [summary, setSummary] = useState({
     summary: "",
@@ -216,4 +216,4 @@ const Summerize: FC = (): JSX.Element => {
   );
 };
 
-export default Summerize;
+export default Summarize;
