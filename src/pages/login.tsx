@@ -22,7 +22,7 @@ const Login = () => {
       const data = await res.json();
       if (data.token) {
         localStorage.setItem("token", data.token);
-        navigate("/summerize");
+        navigate("/summarize");
       } else {
         setError(data.error || "Erreur de connexion");
       }
