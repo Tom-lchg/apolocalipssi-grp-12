@@ -50,7 +50,16 @@ const Summarize: FC = (): JSX.Element => {
           "https://huggingface.co/api/models?pipeline_tag=summarization"
         );
         const data = await response.json();
-        setModels(data);
+
+        /**
+         * On filtre les modèles OpenAI, GPT et ChatGPT car ils ne sont plus disponibles
+         * On utilise un regex pour cibler les modèles qui contiennent "openai", "gpt" ou "chatgpt"
+         */
+        const filtered = data.filter(
+          (model: IModel) => !/openai|gpt|chatgpt/i.test(model.modelId)
+        );
+
+        setModels(filtered);
       } catch (error) {
         console.error("Erreur lors de la récupération des modèles:", error);
       } finally {
