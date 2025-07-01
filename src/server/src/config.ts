@@ -12,6 +12,7 @@ export const corsOptions = {
 };
 
 export const PORT = process.env.PORT || 3001;
+export const MONGO_URI = process.env.MONGO_URI!;
 
 /**
  * Model utilisé pour les résumés et les points clés
