@@ -1,0 +1,137 @@
+import { Response, Router } from "express";
+import pdfParse from "pdf-parse";
+import { IRequestWithFile, ISummarizeResponse } from "../../types";
+import { upload } from "../../utils";
+
+// Interface pour la réponse de l'API Ollama
+interface IOllamaResponse {
+  response: string;
+  done: boolean;
+}
+
+const router = Router();
+
+/**
+ * Route pour générer un résumé à partir d'un fichier PDF
+ */
+router.post(
+  "/pdf",
+  upload.single("file"),
+  // @ts-expect-error - Express type error
+  async (req: IRequestWithFile, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: "Aucun fichier PDF fourni",
+        } as ISummarizeResponse);
+      }
+
+      // Extraction du texte du PDF
+      const pdfData = await pdfParse(req.file.buffer);
+      const text = pdfData.text;
+
+      if (!text || text.trim().length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: "Impossible d'extraire du texte du PDF",
+        } as ISummarizeResponse);
+      }
+
+      let summary: string;
+      let keyPoints: string[];
+
+      try {
+        // Appel à Ollama pour générer le résumé
+        const summaryRes = await fetch(
+          "http://host.docker.internal:11434/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gemma:2b",
+              prompt: `Fait moi le résumé de ce texte en max 1500 caractères: ${text}`,
+              stream: false,
+            }),
+          }
+        );
+
+        const summaryData = (await summaryRes.json()) as IOllamaResponse;
+
+        // Vérification que la réponse contient bien les données attendues
+        if (!summaryData.response) {
+          console.warn("Réponse Ollama invalide pour le résumé:", summaryData);
+          throw new Error("Réponse invalide d'Ollama pour le résumé");
+        }
+
+        summary = summaryData.response;
+
+        // Appel à Ollama pour générer les points clés
+        const keyPointsRes = await fetch(
+          "http://host.docker.internal:11434/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "gemma:2b",
+              prompt: `Extrait 5 points clés de ce texte. Réponds uniquement avec les points clés, un par ligne, sans numérotation: ${text}`,
+              stream: false,
+            }),
+          }
+        );
+
+        const keyPointsData = (await keyPointsRes.json()) as IOllamaResponse;
+
+        // Vérification que la réponse contient bien les données attendues
+        if (!keyPointsData.response) {
+          console.warn(
+            "Réponse Ollama invalide pour les points clés:",
+            keyPointsData
+          );
+          keyPoints = ["Aucun point clé extrait"];
+        } else {
+          keyPoints = keyPointsData.response
+            .split("\n")
+            .map((point) => point.trim())
+            .filter((point) => point.length > 0)
+            .slice(0, 5);
+
+          // Si aucun point clé n'a été extrait, on utilise un point par défaut
+          if (keyPoints.length === 0) {
+            keyPoints = ["Aucun point clé extrait"];
+          }
+        }
+      } catch (modelError) {
+        console.error("Erreur avec le modèle Ollama:", modelError);
+        return res.status(500).json({
+          success: false,
+          error: "Erreur lors de la génération du résumé avec Ollama",
+          summary: "",
+          keyPoints: [],
+        } as ISummarizeResponse);
+      }
+
+      const response: ISummarizeResponse = {
+        summary: summary,
+        keyPoints: keyPoints,
+        success: true,
+      };
+
+      res.json(response);
+    } catch (error) {
+      console.error("Erreur lors du traitement du PDF:", error);
+      res.status(500).json({
+        success: false,
+        error: "Erreur lors du traitement du PDF",
+        summary: "",
+        keyPoints: [],
+      } as ISummarizeResponse);
+    }
+  }
+);
+
+export default router;

@@ -1,0 +1,59 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: src/Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./src/server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./uploads:/app/uploads
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    pull_policy: always
+    restart: unless-stopped
+    entrypoint: sh -c "ollama serve & sleep 5 && ollama pull mistral && tail -f /dev/null"
+
+  # Service pour afficher les URLs
+  urls-display:
+    image: alpine:latest
+    depends_on:
+      - frontend
+      - backend
+      - ollama
+    command: >
+      sh -c "
+      echo '🚀 ========================================';
+      echo '🎉 Tous les services sont démarrés !';
+      echo '========================================';
+      echo '';
+      echo '📱 Frontend: http://localhost:5173';
+      echo '🔗 Backend API: http://localhost:3001';
+      echo '🤖 Ollama: http://localhost:11434';
+      echo '';
+      echo '💡 Pour arrêter les services: docker-compose down';
+      echo '========================================';
+      echo '';
+      tail -f /dev/null
+      "
+
+volumes:
+  ollama:

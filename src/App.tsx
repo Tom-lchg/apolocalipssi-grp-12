@@ -1,4 +1,6 @@
-import { Button } from "./components/ui/button";
+import { Link } from "react-router";
+import { buttonVariants } from "./components/ui/button";
+import { cn } from "./lib/utils";
 
 function App() {
   return (
@@ -13,7 +15,9 @@ function App() {
           instantanément un résumé clair avec les points clés. Simple, rapide,
           accessible partout.
         </p>
-        <Button>Essayer gratuitement</Button>
+        <Link to="/summarize" className={cn(buttonVariants())}>
+          Essayer maintenant
+        </Link>
 
         <div className="w-full h-[550px] bg-red-50 rounded-lg" />
       </article>

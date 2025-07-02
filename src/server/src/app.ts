@@ -1,6 +1,6 @@
-import express, { Application } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import express, { Application } from "express";
 import mongoose from "mongoose";
 import { MONGO_URI, corsOptions } from "./config";
 
@@ -13,3 +13,4 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
 // mongoose.connect(MONGO_URI!)
 //   .then(() => console.log("Connecté à MongoDB"))
 //   .catch((err) => console.error("Erreur MongoDB :", err));
+

@@ -1,0 +1,17 @@
+# Dockerfile.dev pour le backend en mode développement
+FROM node:18
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+RUN npm install
+
+# Copier les sources (seront montées en volume)
+COPY . .
+
+# Exposer le port
+EXPOSE 3001
+
+# Démarrer avec nodemon pour le hot reload
+CMD ["npm", "run", "dev"] 

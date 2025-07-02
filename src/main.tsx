@@ -7,7 +7,7 @@ import Nav from "./components/nav.tsx";
 import "./index.css";
 import Login from "./pages/login.tsx";
 import Register from "./pages/register.tsx";
-import Summerize from "./pages/summerize.tsx";
+import Summarize from "./pages/summarize.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/summerize" element={<Summerize />} />
+        <Route path="/summarize" element={<Summarize />} />
       </Routes>
       <Footer />
     </BrowserRouter>

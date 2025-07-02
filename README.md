@@ -1,69 +1,163 @@
-# React + TypeScript + Vite
+<section style="max-width: 768px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px; align-items: center;">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 style="text-align: center; font-size: 3.5em; max-width: 500px; margin: 0 auto;">Apocal'IPSSI 2025</h1>
 
-Currently, two official plugins are available:
+<h1 style="text-align: center; font-size: 2em; max-width: 500px; margin: 0 auto;">Proof Of Concept : 
+Assistant intelligent de synthèse de documents
+</h1>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<article style="display: flex; flex-direction: column; gap: 6px">
+<h2 style="text-align: center; font-size: 1.5em; max-width: 500px; margin: 0 auto;">Groupe 12</h2>
 
-## Expanding the ESLint configuration
+<ul style="margin-top: 6px">
+<li>BOUTTIER Yanis</li>
+<li>CAPEL Jules</li>
+<li>GAMY Stive</li>
+<li>LASSOUED Saddem</li>
+<li>LAU Tom</li>
+<li>TCHINDA DOUANLA Stevie Carole</li>
+</ul>
+</article>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+</section>
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+<br>
+<br>
+<br>
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 📋 Description du projet
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Ce projet est un assistant intelligent de synthèse de documents développé dans le cadre de l'Apocal'IPSSI 2025. L'application permet aux utilisateurs de télécharger des documents (PDF, texte) et d'obtenir des résumés intelligents générés par IA.
+
+### 🚀 Fonctionnalités principales
+
+- **Authentification utilisateur** : Système de connexion et d'inscription sécurisé
+- **Upload de documents** : Support pour les fichiers PDF et texte
+- **Synthèse intelligente** : Génération automatique de résumés via IA
+- **Interface moderne** : Interface utilisateur intuitive et responsive
+- **API REST** : Backend robuste avec gestion d'erreurs
+
+### 🛠️ Technologies utilisées
+
+**Frontend :**
+
+- React 18 avec TypeScript
+- Vite pour le build
+- Tailwind CSS pour le styling
+- Shadcn/ui pour les composants
+- React Router pour la navigation
+
+**Backend :**
+
+- Node.js avec Express
+- TypeScript
+- MongoDB avec Mongoose
+- JWT pour l'authentification
+- Multer pour la gestion des fichiers
+- Hugging Face API pour l'IA
+
+## 🚀 Installation et utilisation
+
+### Prérequis
+
+- Docker et Docker Compose installés
+- Git
+
+### 1. Cloner le repository
+
+```bash
+git clone https://github.com/votre-username/apocalipssi-grp-12.git
+cd apocalipssi-grp-12
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Configuration
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Variables d'environnement** : Créez un fichier `.env` dans le dossier `server/` avec les variables suivantes :
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+MONGODB_URI=mongodb://localhost:27017/apocalipssi
+JWT_SECRET=votre_secret_jwt_super_securise
+HUGGING_FACE_API_KEY=votre_cle_api_hugging_face
+PORT=3001
 ```
+
+### 3. Lancement de l'application avec Docker
+
+Pour lancer l'ensemble du projet (frontend, backend et base de données) :
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+Cette commande va :
+
+- Construire les images Docker pour le frontend et le backend
+- Démarrer MongoDB
+- Lancer tous les services
+
+L'application sera accessible sur :
+
+- Frontend : http://localhost:5173
+- Backend API : http://localhost:3001
+
+### Alternative : Installation manuelle (sans Docker)
+
+Si vous préférez installer manuellement :
+
+**Prérequis :**
+
+- Node.js (version 18 ou supérieure)
+- npm ou pnpm
+- MongoDB installé et configuré
+
+**Installation des dépendances :**
+
+```bash
+# Frontend
+npm install
+
+# Backend
+cd server
+npm install
+cd ..
+```
+
+**Lancement manuel :**
+
+```bash
+# Backend (dans un terminal)
+cd server
+npm run dev
+
+# Frontend (dans un autre terminal)
+npm run dev
+```
+
+## 📁 Structure du projet
+
+```
+apocalipssi-grp-12/
+├── src/                    # Frontend React
+│   ├── components/         # Composants réutilisables
+│   ├── pages/             # Pages de l'application
+│   ├── lib/               # Utilitaires et configurations
+│   └── assets/            # Ressources statiques
+├── server/                # Backend Node.js
+│   ├── src/
+│   │   ├── routes/        # Routes API
+│   │   ├── models/        # Modèles MongoDB
+│   │   ├── middleware/    # Middlewares Express
+│   │   └── lib/           # Utilitaires backend
+│   └── package.json
+└── README.md
+```
+
+## 🔧 Scripts disponibles
+
+**Frontend :**
+
+- `npm run dev` : Lance le serveur de développement
+
+**Backend :**
+
+- `npm run dev` : Lance le serveur avec nodemon
