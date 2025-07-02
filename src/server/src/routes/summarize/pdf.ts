@@ -2,6 +2,7 @@ import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
 import { IRequestWithFile, ISummarizeResponse } from "../../types";
 import { upload } from "../../utils";
+import { anonymizePII } from "../../lib/anonymizer"; // <-- Ajout de l'import
 
 // Interface pour la réponse de l'API Ollama
 interface IOllamaResponse {
@@ -29,7 +30,7 @@ router.post(
 
       // Extraction du texte du PDF
       const pdfData = await pdfParse(req.file.buffer);
-      const text = pdfData.text;
+      let text = pdfData.text;
 
       if (!text || text.trim().length === 0) {
         return res.status(400).json({
@@ -38,13 +39,16 @@ router.post(
         } as ISummarizeResponse);
       }
 
+      // ANONYMISATION des données personnelles AVANT envoi à l'IA
+      text = anonymizePII(text);
+
       let summary: string;
       let keyPoints: string[];
 
       try {
         // Appel à Ollama pour générer le résumé
         const summaryRes = await fetch(
-          "http://host.docker.internal:11434/api/generate",
+          "http://ollama:11434/api/generate",
           {
             method: "POST",
             headers: {
@@ -70,7 +74,7 @@ router.post(
 
         // Appel à Ollama pour générer les points clés
         const keyPointsRes = await fetch(
-          "http://host.docker.internal:11434/api/generate",
+          "http://ollama:11434/api/generate",
           {
             method: "POST",
             headers: {
