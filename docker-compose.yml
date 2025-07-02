@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    pull_policy: always
+    restart: unless-stopped
+    # Optionnel : télécharge deepseek au démarrage
+    entrypoint: sh -c "ollama serve & sleep 5 && ollama pull deepseek-coder && tail -f /dev/null"
+
+volumes:
+  ollama:
+    entrypoint: sh -c "ollama serve & sleep 5 && ollama pull deepseek-coder && tail -f /dev/null"
