@@ -11,6 +11,11 @@ mongoose
   .then(() => console.log("Connecté à MongoDB"))
   .catch((err) => console.error("Erreur MongoDB :", err));
 
+mongoose
+  .connect(MONGO_URI!)
+  .then(() => console.log("Connecté à MongoDB"))
+  .catch((err) => console.error("Erreur MongoDB :", err));
+
 app.use("/summarize", summerizePdfRoute);
 app.use("/summarize", summerizeTextRoute);
 app.use("/auth", authRoute);
