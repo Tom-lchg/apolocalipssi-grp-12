@@ -1,5 +1,8 @@
 import process from "process";
 
+import dotenv from "dotenv";
+dotenv.config({ path: "./src/server/.env" });
+
 export const corsOptions = {
   origin: [
     "http://localhost:5173",
