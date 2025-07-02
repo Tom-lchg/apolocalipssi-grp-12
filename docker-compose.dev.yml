@@ -1,4 +1,14 @@
+version: "3.8"
+
 services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data_dev:/data/db
+
   frontend:
     build:
       context: .
@@ -35,10 +45,12 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/apocalipssi
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       - ollama
+      - mongo
 
   ollama:
     image: ollama/ollama
@@ -77,3 +89,4 @@ services:
 
 volumes:
   ollama:
+  mongo_data_dev:
