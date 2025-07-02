@@ -11,11 +11,42 @@ const Summarize: FC = (): JSX.Element => {
   });
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Gère le changement de fichier sélectionné
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     setFile(selectedFile || null);
   };
 
+  /**
+   * Télécharge le résumé et les points clés dans un fichier .txt
+   */
+  const handleDownload = () => {
+    if (!summary.summary) return;
+
+    // Création du contenu du fichier
+    const content = `RÉSUMÉ\n${"=".repeat(50)}\n\n${
+      summary.summary
+    }\n\n\nPOINTS CLÉS\n${"=".repeat(50)}\n\n${summary.keyPoints
+      .map((point, index) => `${index + 1}. ${point}`)
+      .join("\n")}`;
+
+    // Création du blob et téléchargement
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `resume-${new Date().toISOString().split("T")[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  /**
+   * Envoie le fichier PDF au serveur pour générer le résumé
+   */
   const handleUpload = async () => {
     if (!file) return;
 
@@ -76,10 +107,13 @@ const Summarize: FC = (): JSX.Element => {
         <>
           <Separator className="my-12" />
           <article className="space-y-6">
-            <div className="space-y-2">
+            <div className="flex justify-between items-center">
               <h3>Résumé</h3>
-              <p>{summary.summary}</p>
+              <Button onClick={handleDownload} variant="outline">
+                Télécharger (.txt)
+              </Button>
             </div>
+            <p>{summary.summary}</p>
 
             <div className="space-y-2">
               <h3>Points clés</h3>
