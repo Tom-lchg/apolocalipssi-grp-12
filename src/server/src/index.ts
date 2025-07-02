@@ -1,10 +1,10 @@
 import "dotenv/config";
 import mongoose from "mongoose";
 import { app } from "./app";
-import summerizePdfRoute from "./routes/summarize/pdf";
-import summerizeTextRoute from "./routes/summarize/text";
 import { MONGO_URI, PORT } from "./config";
 import authRoute from "./routes/auth";
+import summerizePdfRoute from "./routes/summarize/pdf";
+import summerizeTextRoute from "./routes/summarize/text";
 
 mongoose
   .connect(MONGO_URI!)

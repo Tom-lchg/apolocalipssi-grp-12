@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { Router, Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 
@@ -36,6 +36,7 @@ router.post("/register", async (req: Request, res: Response) => {
       success: true,
       user: { id: user._id, email: user.email },
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     // Si email déjà utilisé (duplicate key)
     if (err.code === 11000) {
@@ -75,9 +76,11 @@ router.post("/login", async (req: Request, res: Response) => {
     }
 
     // Génération du JWT
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+      expiresIn: "1d",
+    });
     return res.json({ success: true, token });
-  } catch (err) {
+  } catch {
     return res.status(500).json({ error: "Erreur serveur" });
   }
 });
