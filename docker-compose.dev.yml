@@ -9,7 +9,9 @@ services:
       - ./src:/app/src
       - ./public:/app/public
       - ./index.html:/app/index.html
-      - ./tsconfig*.json:/app/
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+      - ./tsconfig.node.json:/app/tsconfig.node.json
       - ./vite.config.ts:/app/vite.config.ts
       - ./eslint.config.js:/app/eslint.config.js
       - ./components.json:/app/components.json
