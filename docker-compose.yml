@@ -35,4 +35,3 @@ services:
 
 volumes:
   ollama:
-    entrypoint: sh -c "ollama serve & sleep 5 && ollama pull deepseek-coder && tail -f /dev/null"
