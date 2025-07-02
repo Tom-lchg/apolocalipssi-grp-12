@@ -8,7 +8,9 @@ COPY package*.json ./
 RUN npm install
 
 # Copier les fichiers de configuration
-COPY tsconfig*.json ./
+COPY tsconfig.json ./
+COPY tsconfig.app.json ./
+COPY tsconfig.node.json ./
 COPY vite.config.ts ./
 COPY eslint.config.js ./
 COPY components.json ./
