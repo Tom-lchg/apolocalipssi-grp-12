@@ -16,6 +16,8 @@ services:
       - "3001:3001"
     volumes:
       - ./uploads:/app/uploads
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - ollama
 

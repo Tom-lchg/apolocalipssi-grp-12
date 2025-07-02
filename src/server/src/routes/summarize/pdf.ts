@@ -1,9 +1,13 @@
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
-import { parameters } from "../../config";
-import { hf } from "../../lib/hugging-face";
 import { IRequestWithFile, ISummarizeResponse } from "../../types";
-import { createSimpleSummary, upload } from "../../utils";
+import { upload } from "../../utils";
+
+// Interface pour la réponse de l'API Ollama
+interface IOllamaResponse {
+  response: string;
+  done: boolean;
+}
 
 const router = Router();
 
@@ -23,16 +27,6 @@ router.post(
         } as ISummarizeResponse);
       }
 
-      // Récupération du modèle sélectionné depuis le formulaire
-      const selectedModel = req.body.model;
-
-      if (!selectedModel) {
-        return res.status(400).json({
-          success: false,
-          error: "Aucun modèle d'IA sélectionné",
-        } as ISummarizeResponse);
-      }
-
       // Extraction du texte du PDF
       const pdfData = await pdfParse(req.file.buffer);
       const text = pdfData.text;
@@ -45,34 +39,81 @@ router.post(
       }
 
       let summary: string;
+      let keyPoints: string[];
 
       try {
-        const result = await hf.summarization({
-          model: selectedModel, // Utilisation du modèle sélectionné par l'utilisateur
-          inputs: text,
-          parameters, // variable définie dans le fichier config.ts
-        });
-        summary = result.summary_text;
-      } catch (modelError) {
-        console.warn(
-          "Erreur avec le modèle IA, utilisation du résumé simple:",
-          modelError
+        // Appel à Ollama pour générer le résumé
+        const summaryRes = await fetch(
+          "http://host.docker.internal:11434/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "mistral",
+              prompt: `Fait moi le résumé de ce texte en max 1500 caractères: ${text}`,
+              stream: false,
+            }),
+          }
         );
-        summary = createSimpleSummary(text, parameters.max_length);
+
+        const summaryData = (await summaryRes.json()) as IOllamaResponse;
+
+        // Vérification que la réponse contient bien les données attendues
+        if (!summaryData.response) {
+          console.warn("Réponse Ollama invalide pour le résumé:", summaryData);
+          throw new Error("Réponse invalide d'Ollama pour le résumé");
+        }
+
+        summary = summaryData.response;
+
+        // Appel à Ollama pour générer les points clés
+        const keyPointsRes = await fetch(
+          "http://host.docker.internal:11434/api/generate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "mistral",
+              prompt: `Extrait 5 points clés de ce texte. Réponds uniquement avec les points clés, un par ligne, sans numérotation: ${text}`,
+              stream: false,
+            }),
+          }
+        );
+
+        const keyPointsData = (await keyPointsRes.json()) as IOllamaResponse;
+
+        // Vérification que la réponse contient bien les données attendues
+        if (!keyPointsData.response) {
+          console.warn(
+            "Réponse Ollama invalide pour les points clés:",
+            keyPointsData
+          );
+          keyPoints = ["Aucun point clé extrait"];
+        } else {
+          keyPoints = keyPointsData.response
+            .split("\n")
+            .map((point) => point.trim())
+            .filter((point) => point.length > 0)
+            .slice(0, 5);
+
+          // Si aucun point clé n'a été extrait, on utilise un point par défaut
+          if (keyPoints.length === 0) {
+            keyPoints = ["Aucun point clé extrait"];
+          }
+        }
+      } catch (modelError) {
+        console.error("Erreur avec le modèle Ollama:", modelError);
+        return res.status(500).json({
+          success: false,
+          error: "Erreur lors de la génération du résumé avec Ollama",
+          summary: "",
+          keyPoints: [],
+        } as ISummarizeResponse);
       }
-
-      // Extraction des points clés
-      const sentences = text
-        .replace(/[.!?]+/g, ".")
-        .split(".")
-        .map((sentence: string) => sentence.trim())
-        .filter(
-          (sentence: string) => sentence.length > 20 && sentence.length < 200
-        )
-        .slice(0, 5);
-
-      const keyPoints =
-        sentences.length > 0 ? sentences : ["Aucun point clé extrait"];
 
       const response: ISummarizeResponse = {
         summary: summary,
