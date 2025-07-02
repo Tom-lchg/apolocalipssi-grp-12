@@ -33,6 +33,8 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - ollama
 
@@ -45,6 +47,7 @@ services:
       - ollama:/root/.ollama
     pull_policy: always
     restart: unless-stopped
+    entrypoint: sh -c "ollama serve & sleep 5 && ollama pull mistral && tail -f /dev/null"
 
   # Service pour afficher les URLs
   urls-display:
