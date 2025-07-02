@@ -60,9 +60,8 @@ Ce projet est un assistant intelligent de synthèse de documents développé dan
 
 ### Prérequis
 
-- Node.js (version 18 ou supérieure)
-- npm ou pnpm
-- MongoDB installé et configuré
+- Docker et Docker Compose installés
+- Git
 
 ### 1. Cloner le repository
 
@@ -71,26 +70,9 @@ git clone https://github.com/votre-username/apocalipssi-grp-12.git
 cd apocalipssi-grp-12
 ```
 
-### 2. Installation des dépendances
+### 2. Configuration
 
-**Frontend :**
-
-```bash
-# À la racine du projet
-npm install
-```
-
-**Backend :**
-
-```bash
-# Dans le dossier server
-cd server
-npm install
-```
-
-### 3. Configuration
-
-1. **Variables d'environnement** : Créez un fichier `.env` dans le dossier `server/` avec les variables suivantes :
+**Variables d'environnement** : Créez un fichier `.env` dans le dossier `server/` avec les variables suivantes :
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/apocalipssi
@@ -99,29 +81,57 @@ HUGGING_FACE_API_KEY=votre_cle_api_hugging_face
 PORT=3001
 ```
 
-2. **Configuration MongoDB** : Assurez-vous que MongoDB est en cours d'exécution sur votre machine.
+### 3. Lancement de l'application avec Docker
 
-### 4. Lancement de l'application
-
-**Démarrer le backend :**
+Pour lancer l'ensemble du projet (frontend, backend et base de données) :
 
 ```bash
-# Dans le dossier server
-cd server
-npm run dev
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
-**Démarrer le frontend :**
+Cette commande va :
 
-```bash
-# À la racine du projet (dans un nouveau terminal)
-npm run dev
-```
+- Construire les images Docker pour le frontend et le backend
+- Démarrer MongoDB
+- Lancer tous les services
 
 L'application sera accessible sur :
 
 - Frontend : http://localhost:5173
 - Backend API : http://localhost:3001
+
+### Alternative : Installation manuelle (sans Docker)
+
+Si vous préférez installer manuellement :
+
+**Prérequis :**
+
+- Node.js (version 18 ou supérieure)
+- npm ou pnpm
+- MongoDB installé et configuré
+
+**Installation des dépendances :**
+
+```bash
+# Frontend
+npm install
+
+# Backend
+cd server
+npm install
+cd ..
+```
+
+**Lancement manuel :**
+
+```bash
+# Backend (dans un terminal)
+cd server
+npm run dev
+
+# Frontend (dans un autre terminal)
+npm run dev
+```
 
 ## 📁 Structure du projet
 

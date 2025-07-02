@@ -51,7 +51,7 @@ router.post(
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model: "mistral",
+              model: "gemma:2b",
               prompt: `Fait moi le résumé de ce texte en max 1500 caractères: ${text}`,
               stream: false,
             }),
@@ -77,7 +77,7 @@ router.post(
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              model: "mistral",
+              model: "gemma:2b",
               prompt: `Extrait 5 points clés de ce texte. Réponds uniquement avec les points clés, un par ligne, sans numérotation: ${text}`,
               stream: false,
             }),
