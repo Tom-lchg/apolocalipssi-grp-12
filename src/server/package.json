@@ -9,7 +9,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:text": "jest --testPathPatterns=text.test.ts"
+    "test:text": "jest --testPathPatterns=text.test.ts",
+    "test:auth": "jest --testPathPatterns=auth.test.ts"
   },
   "author": "",
   "license": "ISC",
