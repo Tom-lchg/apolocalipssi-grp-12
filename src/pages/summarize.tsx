@@ -57,7 +57,7 @@ const Summarize: FC = (): JSX.Element => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("http://localhost:3001/summarize/pdf", {
+      const res = await fetch("http://localhost:3001/upload", {
         method: "POST",
         body: formData,
       });

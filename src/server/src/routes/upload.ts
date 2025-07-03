@@ -1,8 +1,8 @@
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
-import { anonymizePII } from "../../lib/anonymizer"; // <-- Ajout de l'import
-import { IRequestWithFile, ISummarizeResponse } from "../../types";
-import { upload } from "../../utils";
+import { anonymizePII } from "../lib/anonymizer"; // <-- Ajout de l'import
+import { IRequestWithFile, ISummarizeResponse } from "../types";
+import { upload } from "../utils";
 
 // Interface pour la réponse de l'API Ollama
 interface IOllamaResponse {
@@ -16,7 +16,7 @@ const router = Router();
  * Route pour générer un résumé à partir d'un fichier PDF
  */
 router.post(
-  "/pdf",
+  "/",
   upload.single("file"),
   // @ts-expect-error - Express type error
   async (req: IRequestWithFile, res: Response) => {

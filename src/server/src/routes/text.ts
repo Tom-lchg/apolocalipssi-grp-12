@@ -4,14 +4,14 @@
  */
 
 import { Request, Response, Router } from "express";
-import { hf } from "../../lib/hugging-face";
-import { ISummarizeRequest, ISummarizeResponse } from "../../types";
-import { createSimpleSummary } from "../../utils";
+import { hf } from "../lib/hugging-face";
+import { ISummarizeRequest, ISummarizeResponse } from "../types";
+import { createSimpleSummary } from "../utils";
 
 const router = Router();
 
 // @ts-expect-error - Express type error
-router.post("/text", async (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   try {
     const { text, maxLength = 150 }: ISummarizeRequest = req.body;
 

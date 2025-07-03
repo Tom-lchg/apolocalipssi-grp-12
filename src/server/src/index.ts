@@ -3,16 +3,16 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { MONGO_URI, PORT } from "./config";
 import authRoute from "./routes/auth";
-import summerizePdfRoute from "./routes/summarize/pdf";
-import summerizeTextRoute from "./routes/summarize/text";
+import textRoute from "./routes/text";
+import uploadRoute from "./routes/upload";
 
 mongoose
   .connect(MONGO_URI!)
   .then(() => console.log("Connecté à MongoDB"))
   .catch((err) => console.error("Erreur MongoDB :", err));
 
-app.use("/summarize", summerizePdfRoute);
-app.use("/summarize", summerizeTextRoute);
+app.use("/upload", uploadRoute);
+app.use("/text", textRoute);
 app.use("/auth", authRoute);
 
 app.listen(PORT, () => {
