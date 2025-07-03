@@ -13,7 +13,7 @@ const Footer: FC = (): JSX.Element => {
           Essayez-le maintenant et transformez la façon dont vous gérez vos
           lectures de PDF.
         </p>
-        <Link to="/login" className={cn(buttonVariants())}>
+        <Link to="/summarize" className={cn(buttonVariants())}>
           Essayer
         </Link>
       </section>
