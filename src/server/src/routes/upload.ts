@@ -1,8 +1,10 @@
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
-import { anonymizePII } from "../lib/anonymizer"; // <-- Ajout de l'import
+import { anonymizePII } from "../lib/anonymizer";
 import { IRequestWithFile, ISummarizeResponse } from "../types";
 import { upload } from "../utils";
+import { Summary } from "../models/Summary";
+import { authMiddlewareOptional, AuthenticatedRequest } from "../middleware/authMiddleware";
 
 // Interface pour la réponse de l'API Ollama
 interface IOllamaResponse {
@@ -17,9 +19,9 @@ const router = Router();
  */
 router.post(
   "/",
+  authMiddlewareOptional,
   upload.single("file"),
-  // @ts-expect-error - Express type error
-  async (req: IRequestWithFile, res: Response) => {
+  async (req: IRequestWithFile & AuthenticatedRequest, res: Response) => {
     try {
       if (!req.file) {
         return res.status(400).json({
@@ -116,24 +118,32 @@ router.post(
           error: "Erreur lors de la génération du résumé avec Ollama",
           summary: "",
           keyPoints: [],
-        } as ISummarizeResponse);
+        });
       }
 
-      const response: ISummarizeResponse = {
-        summary: summary,
-        keyPoints: keyPoints,
-        success: true,
-      };
+      // Enregistrement si utilisateur connecté
+      if (req.user?.id) {
+        await Summary.create({
+          user: req.user.id,
+          originalText: text,
+          summary,
+          keyPoints,
+        });
+      }
 
-      res.json(response);
-    } catch (error) {
-      console.error("Erreur lors du traitement du PDF:", error);
-      res.status(500).json({
+      return res.json({
+        success: true,
+        summary,
+        keyPoints,
+      } satisfies ISummarizeResponse);
+    } catch (err) {
+      console.error("Erreur traitement PDF:", err);
+      return res.status(500).json({
         success: false,
         error: "Erreur lors du traitement du PDF",
         summary: "",
         keyPoints: [],
-      } as ISummarizeResponse);
+      });
     }
   }
 );

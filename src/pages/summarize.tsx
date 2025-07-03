@@ -26,11 +26,10 @@ const Summarize: FC = (): JSX.Element => {
     if (!summary.summary) return;
 
     // Création du contenu du fichier
-    const content = `RÉSUMÉ\n${"=".repeat(50)}\n\n${
-      summary.summary
-    }\n\n\nPOINTS CLÉS\n${"=".repeat(50)}\n\n${summary.keyPoints
-      .map((point, index) => `${index + 1}. ${point}`)
-      .join("\n")}`;
+    const content = `RÉSUMÉ\n${"=".repeat(50)}\n\n${summary.summary
+      }\n\n\nPOINTS CLÉS\n${"=".repeat(50)}\n\n${summary.keyPoints
+        .map((point, index) => `${index + 1}. ${point}`)
+        .join("\n")}`;
 
     // Création du blob et téléchargement
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
@@ -57,8 +56,13 @@ const Summarize: FC = (): JSX.Element => {
       const formData = new FormData();
       formData.append("file", file);
 
+      const token = localStorage.getItem("token");
+
       const res = await fetch("http://localhost:3001/upload", {
         method: "POST",
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : undefined, // Pas d'en-tête si pas de token
         body: formData,
       });
 

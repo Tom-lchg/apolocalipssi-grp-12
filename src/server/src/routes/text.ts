@@ -1,17 +1,18 @@
-/**
- * Route pour générer un résumé et les points clés d'un texte
- * Utilise le modèle Hugging Face pour l'extraction de points clés
- */
-
 import { Request, Response, Router } from "express";
 import { hf } from "../lib/hugging-face";
 import { ISummarizeRequest, ISummarizeResponse } from "../types";
 import { createSimpleSummary } from "../utils";
+import { Summary } from "../models/Summary";
+import { authMiddleware, AuthenticatedRequest } from "../middleware/authMiddleware";
 
 const router = Router();
 
-// @ts-expect-error - Express type error
-router.post("/", async (req: Request, res: Response) => {
+// Middleware d’authentification optionnelle
+const optionalAuth = (req: Request, res: Response, next: Function): void => {
+  authMiddleware(req as AuthenticatedRequest, res, () => next());
+};
+
+router.post("/", optionalAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { text, maxLength = 150 }: ISummarizeRequest = req.body;
 
@@ -54,36 +55,37 @@ router.post("/", async (req: Request, res: Response) => {
       summary = createSimpleSummary(text, maxLength);
     }
 
-    // Extraction des points clés en utilisant une approche simplifiée
-    // Diviser le texte en phrases et extraire les phrases importantes
-    const sentences = text
+    const keyPoints = text
       .replace(/[.!?]+/g, ".")
       .split(".")
-      .map((sentence: string) => sentence.trim())
-      .filter(
-        (sentence: string) => sentence.length > 20 && sentence.length < 200
-      )
+      .map((s) => s.trim())
+      .filter((s) => s.length > 20 && s.length < 200)
       .slice(0, 5);
 
-    // Utiliser les premières phrases importantes comme points clés
-    const keyPoints =
-      sentences.length > 0 ? sentences : ["Aucun point clé extrait"];
-
     const response: ISummarizeResponse = {
-      summary: summary,
-      keyPoints: keyPoints,
+      summary,
+      keyPoints: keyPoints.length > 0 ? keyPoints : ["Aucun point clé extrait"],
       success: true,
     };
 
-    res.json(response);
+    if (req.user?.id) {
+      await Summary.create({
+        user: req.user.id,
+        originalText: text,
+        summary: response.summary,
+        keyPoints: response.keyPoints,
+      });
+    }
+
+    return res.json(response);
   } catch (error) {
     console.error("Erreur lors de la génération du résumé:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: "Erreur lors de la génération du résumé",
       summary: "",
       keyPoints: [],
-    } as ISummarizeResponse);
+    });
   }
 });
 

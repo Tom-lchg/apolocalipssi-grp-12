@@ -29,6 +29,9 @@ const Nav: FC = (): JSX.Element => {
               <Link to="/summarize" className={cn(buttonVariants())}>
                 Essayer
               </Link>
+              <Link to="/history" className={cn(buttonVariants({ variant: "ghost" }))}>
+                Historique
+              </Link>
               <button
                 onClick={handleLogout}
                 className={cn(buttonVariants({ variant: "outline" }))}
