@@ -1,8 +1,8 @@
 import { Response, Router } from "express";
 import pdfParse from "pdf-parse";
+import { anonymizePII } from "../../lib/anonymizer"; // <-- Ajout de l'import
 import { IRequestWithFile, ISummarizeResponse } from "../../types";
 import { upload } from "../../utils";
-import { anonymizePII } from "../../lib/anonymizer"; // <-- Ajout de l'import
 
 // Interface pour la réponse de l'API Ollama
 interface IOllamaResponse {
@@ -48,7 +48,7 @@ router.post(
       try {
         // Appel à Ollama pour générer le résumé
         const summaryRes = await fetch(
-          "http://ollama:11434/api/generate",
+          "http://host.docker.internal:11434/api/generate",
           {
             method: "POST",
             headers: {
@@ -74,7 +74,7 @@ router.post(
 
         // Appel à Ollama pour générer les points clés
         const keyPointsRes = await fetch(
-          "http://ollama:11434/api/generate",
+          "http://host.docker.internal:11434/api/generate",
           {
             method: "POST",
             headers: {
